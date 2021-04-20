@@ -13,7 +13,18 @@ class SettingsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(SettingsManager::class, function ($app) {
+            return new SettingsManager($app);
+        });
+
+        $this->app->singleton(SettingsStorageInterface::class, function ($app) {
+            return $app->make(SettingsManager::class)->driver();
+        });
+
+        // Facade
+        $this->app->singleton('Settings', function ($app) {
+            return new Settings($app->make(SettingsStorageInterface::class));
+        });
     }
 
     /**
