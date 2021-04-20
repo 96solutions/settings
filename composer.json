@@ -1,0 +1,19 @@
+{
+    "name": "96solutions/settings",
+    "description": "Settings manager for Laravel",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Roman Hrab",
+            "email": "rhrab0x5c@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+      "psr-4": {
+        "NinetySixSolutions\\Settings\\": "src/"
+      }
+    }
+}
