@@ -3,6 +3,11 @@ namespace NinetySixSolutions\Settings;
 
 use NinetySixSolutions\Settings\Exceptions\SettingNotFoundException;
 
+/**
+ * Class JsonSettingsStorage
+ *
+ * @package NinetySixSolutions\Settings
+ */
 class JsonSettingsStorage implements SettingsStorageInterface
 {
     protected $path;
@@ -16,7 +21,7 @@ class JsonSettingsStorage implements SettingsStorageInterface
     /**
      * Create new storage instance
      *
-     * @param null $path
+     * @param string|null $path
      */
     function __construct($path = null)
     {
@@ -38,7 +43,7 @@ class JsonSettingsStorage implements SettingsStorageInterface
      *
      * @return array
      */
-    protected function newInstance()
+    protected function newInstance(): array
     {
         $data = json_decode(file_get_contents($this->path), true);
 
@@ -55,9 +60,9 @@ class JsonSettingsStorage implements SettingsStorageInterface
      * @param $key
      * @param $value
      *
-     * @return $this
+     * @return JsonSettingsStorage
      */
-    public function where($key, $value)
+    public function where($key, $value): JsonSettingsStorage
     {
         $this->data = array_filter($this->data, function ($item) use ($key, $value) {
             return (bool) ($item[$key] == $value);
@@ -69,11 +74,11 @@ class JsonSettingsStorage implements SettingsStorageInterface
     /**
      * Execute search for a single record by existed 'where' rules
      *
-     * @return $this
+     * @return JsonSettingsStorage
      *
      * @throws SettingNotFoundException
      */
-    public function firstOrFail()
+    public function firstOrFail(): JsonSettingsStorage
     {
         $item = reset($this->data);
         $this->data = $this->newInstance();
@@ -92,8 +97,10 @@ class JsonSettingsStorage implements SettingsStorageInterface
 
     /**
      * Save setting record (update or create) to file
+     *
+     * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         $data = $this->newInstance();
 
@@ -143,14 +150,16 @@ class JsonSettingsStorage implements SettingsStorageInterface
 
         $this->setInstance($data);
         $this->data = $this->newInstance();
+
+        return true;
     }
 
     /**
      * Delete a record from the file
      *
-     * @return $this
+     * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         $data = $this->newInstance();
         $data = array_filter($data, function ($item) {
@@ -164,7 +173,7 @@ class JsonSettingsStorage implements SettingsStorageInterface
         $this->active = null;
         $this->module = null;
 
-        return $this;
+        return true;
     }
 
     /**

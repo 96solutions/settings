@@ -3,19 +3,24 @@ namespace NinetySixSolutions\Settings;
 
 use NinetySixSolutions\Settings\Models\Settings as SettingsModel;
 
+/**
+ * Class EloquentSettingsStorage
+ *
+ * @package NinetySixSolutions\Settings
+ */
 class EloquentSettingsStorage extends SettingsModel implements SettingsStorageInterface
 {
     /**
      * Create new storage instance
      *
-     * @param bool|string $connection
+     * @param string|null $connection
      * @param string      $table
      * @param array       $attributes
      */
-    public function __construct($connection = false, $table = 'settings', array $attributes = [])
+    public function __construct($connection = null, $table = 'settings', array $attributes = [])
     {
         parent::__construct($attributes);
-        $connection = $connection !== false ? $connection : config('settings.connection');
+        $connection = $connection !== null ? $connection : config('settings.connection');
         $table = !empty($table) ? $table : config('settings.table');
 
         $this->setConnection($connection);
@@ -30,7 +35,7 @@ class EloquentSettingsStorage extends SettingsModel implements SettingsStorageIn
      *
      * @return static
      */
-    public function newInstance($attributes = [], $exists = false)
+    public function newInstance($attributes = [], $exists = false): EloquentSettingsStorage
     {
         $model = new static($this->connection, $this->table, $attributes);
         $model->exists = $exists;

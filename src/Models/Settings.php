@@ -4,6 +4,11 @@ namespace NinetySixSolutions\Settings\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Settings
+ *
+ * @package NinetySixSolutions\Settings\Models
+ */
 class Settings extends Model
 {
     /**
@@ -16,7 +21,7 @@ class Settings extends Model
     /**
      * Set setting value as json if array.
      *
-     * @param  string $value
+     * @param mixed $value
      */
     public function setValueAttribute($value)
     {
@@ -26,9 +31,9 @@ class Settings extends Model
     /**
      * Return setting value as json if array.
      *
-     * @param  string $value
+     * @param  mixed $value
      *
-     * @return string
+     * @return mixed
      */
     public function getValueAttribute($value)
     {

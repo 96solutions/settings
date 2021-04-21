@@ -1,4 +1,5 @@
 <?php
+
 namespace NinetySixSolutions\Settings;
 
 use \Exception;
@@ -14,7 +15,7 @@ class Settings
      *
      * @var SettingsStorageInterface
      */
-    protected $storage;
+    protected SettingsStorageInterface $storage;
 
     /**
      * Init settings storage
@@ -30,13 +31,15 @@ class Settings
      * Save / Update settings record
      *
      * @param string  $name   setting name
-     * @param string  $value  value
+     * @param mixed   $value  value
      * @param string  $module module name if NULL global settings
      * @param boolean $active if setting is active
      *
      * @return SettingsStorageInterface
+     *
+     * @throws Exception
      */
-    public function set($name, $value, $module = 'global', $active = true)
+    public function set(string $name, $value, string $module = 'global', bool $active = true): SettingsStorageInterface
     {
         if ($this->has($name, $module)) {
             return $this->update($name, $value, $module, $active);
@@ -50,15 +53,15 @@ class Settings
     /**
      * Check if setting exists
      *
-     * @param  string $name   setting name
-     * @param  string $module module name if NULL global settings
+     * @param string $name   setting name
+     * @param string $module module name if NULL global settings
      *
      * @return boolean
      */
-    public function has($name, $module = 'global')
+    public function has(string $name, string $module = 'global'): bool
     {
         try {
-            $this->getModelInstance($name, $module);
+            $this->getInstance($name, $module);
 
             return true;
         } catch (Exception $e) {
@@ -69,13 +72,13 @@ class Settings
     /**
      * Getting setting value
      *
-     * @param  string $name    setting name
-     * @param string  $module  module name if NULL global settings
-     * @param  string $default default value if setting don't exists
+     * @param string $name    setting name
+     * @param string $module  module name if NULL global settings
+     * @param mixed  $default default value if setting don't exists
      *
      * @return mixed value, default or NULL
      */
-    public function get($name, $module = 'global', $default = null)
+    public function get(string $name, string $module = 'global', $default = null)
     {
         if ($this->has($name, $module)) {
             return $this->storage->value;
@@ -89,16 +92,18 @@ class Settings
     /**
      * Update an existing record
      *
-     * @param  string  $name   setting name
-     * @param  string  $value  value
-     * @param  string  $module module name if NULL global settings
-     * @param  boolean $active if setting is active
+     * @param string  $name   setting name
+     * @param mixed   $value  value
+     * @param string  $module module name if NULL global settings
+     * @param boolean $active if setting is active
      *
      * @return SettingsStorageInterface
+     *
+     * @throws Exception
      */
-    public function update($name, $value, $module = 'global', $active = true)
+    public function update(string $name, $value, string $module = 'global', bool $active = true)
     {
-        $this->getModelInstance($name, $module);
+        $this->getInstance($name, $module);
         $this->save($name, $value, $module, $active);
 
         return $this->storage;
@@ -107,14 +112,16 @@ class Settings
     /**
      * Check if setting is active
      *
-     * @param  string $name   setting name
-     * @param  string $module module name if NULL global settings
+     * @param string $name   setting name
+     * @param string $module module name if NULL global settings
      *
      * @return boolean
+     *
+     * @throws Exception
      */
-    public function isActive($name, $module = 'global')
+    public function isActive(string $name, string $module = 'global'): bool
     {
-        $this->getModelInstance($name, $module);
+        $this->getInstance($name, $module);
 
         return boolval($this->storage->active);
     }
@@ -122,14 +129,16 @@ class Settings
     /**
      * Make setting active
      *
-     * @param  string $name   active
-     * @param  string $module module name if NULL global settings
+     * @param string $name   active
+     * @param string $module module name if NULL global settings
      *
      * @return boolean
+     *
+     * @throws Exception
      */
-    public function activate($name, $module = 'global')
+    public function activate(string $name, string $module = 'global'): bool
     {
-        $this->getModelInstance($name, $module);
+        $this->getInstance($name, $module);
         $this->storage->active = true;
         $this->storage->save();
 
@@ -139,14 +148,16 @@ class Settings
     /**
      * Make setting inactive
      *
-     * @param  string $name   setting name
-     * @param  string $module module name if NULL global settings
+     * @param string $name   setting name
+     * @param string $module module name if NULL global settings
      *
      * @return boolean
+     *
+     * @throws Exception
      */
-    public function deactivate($name, $module = 'global')
+    public function deactivate(string $name, string $module = 'global'): bool
     {
-        $this->getModelInstance($name, $module);
+        $this->getInstance($name, $module);
         $this->storage->active = false;
         $this->storage->save();
 
@@ -156,14 +167,16 @@ class Settings
     /**
      * Delete setting record
      *
-     * @param  string $name   setting name
-     * @param  string $module module name if NULL global settings
+     * @param string $name   setting name
+     * @param string $module module name if NULL global settings
      *
      * @return boolean
+     *
+     * @throws Exception
      */
-    public function delete($name, $module = 'global')
+    public function delete(string $name, string $module = 'global'): bool
     {
-        $this->getModelInstance($name, $module);
+        $this->getInstance($name, $module);
         $this->storage->delete();
 
         return true;
@@ -172,14 +185,14 @@ class Settings
     /**
      * Save data in db
      *
-     * @param  string  $name   name
-     * @param  string  $value  value
-     * @param  string  $module module name if NULL global settings
-     * @param  boolean $active if setting is active
+     * @param string  $name   name
+     * @param mixed   $value  value
+     * @param string  $module module name if NULL global settings
+     * @param boolean $active if setting is active
      *
-     * @return Settings
+     * @return void
      */
-    private function save($name, $value, $module = 'global', $active = true)
+    private function save(string $name, $value, string $module = 'global', bool $active = true): void
     {
         $this->storage->name = $name;
         $this->storage->value = $value;
@@ -187,21 +200,19 @@ class Settings
         $this->storage->module = $module;
 
         $this->storage->save();
-
-        return $this;
     }
 
     /**
      * Looking for settings by name and module
      *
-     * @param  string $name   settings name
-     * @param  string $module module name if NULL global settings
+     * @param string $name   settings name
+     * @param string $module module name if NULL global settings
      *
-     * @return Settings
+     * @return void
      *
      * @throws Exception
      */
-    private function getModelInstance($name = null, $module = 'global')
+    private function getInstance(string $name, string $module = 'global'): void
     {
         try {
             $instance = clone $this->storage;
@@ -209,8 +220,6 @@ class Settings
         } catch (Exception $e) {
             $this->throwException($name, $module);
         }
-
-        return $this;
     }
 
     /**
@@ -218,7 +227,7 @@ class Settings
      *
      * @return Settings
      */
-    private function create()
+    private function create(): Settings
     {
         $this->storage = clone $this->storage;
 
@@ -228,15 +237,13 @@ class Settings
     /**
      * throw Exception
      *
-     * @param  string $name   setting name
-     * @param  string $module module name if NULL global settings
+     * @param string $name   setting name
+     * @param string $module module name if NULL global settings
      *
      * @throws Exception
      */
-    private function throwException($name, $module = 'global')
+    private function throwException(string $name, string $module = 'global')
     {
-        $message = $module === 'global' ? 'laravel-settings::errors.setting.not_found' : 'laravel-settings::errors.setting.not_found_in_module';
-
-        throw new SettingNotFoundException(trans($message, ['name' => $name, 'module' => $module]));
+        throw new SettingNotFoundException(sprintf('Setting %s not found in module %s', $name, $module));
     }
 }

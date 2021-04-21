@@ -5,41 +5,61 @@ use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Query\Builder;
 use NinetySixSolutions\Settings\Exceptions\SettingNotFoundException;
 
+/**
+ * Class DbSettingsStorage
+ *
+ * @package NinetySixSolutions\Settings
+ */
 class DbSettingsStorage implements SettingsStorageInterface
 {
     /**
-     * @var string Db Connection Name
+     * @var ?string Db Connection Name
      */
-    protected $connection;
+    protected ?string $connection;
 
     /**
      * @var string Db Table Name
      */
-    protected $table;
+    protected string $table;
 
     /**
      * @var Builder
      */
-    protected $query;
+    protected Builder $query;
 
     /**
      * @var ConnectionResolverInterface Database Manager
      */
-    protected $db;
-
-    public $name;
-    public $value;
-    public $active;
-    public $module;
+    protected ConnectionResolverInterface $db;
 
     /**
-     * Create new storage instancecd
+     * @var ?string
+     */
+    public ?string $name;
+
+    /**
+     * @var mixed
+     */
+    public $value;
+
+    /**
+     * @var ?bool
+     */
+    public ?bool $active;
+
+    /**
+     * @var ?string
+     */
+    public ?string $module;
+
+    /**
+     * Create new storage instance
      *
      * @param ConnectionResolverInterface $db
      * @param string|null                 $connection
      * @param string                      $table
      */
-    function __construct(ConnectionResolverInterface $db, $connection = null, $table = 'settings')
+    function __construct(ConnectionResolverInterface $db, ?string $connection = null, string $table = 'settings')
     {
         $this->connection = $connection !== null ? $connection : config('settings.connection');
         $this->table = !empty($table) ? $table : config('settings.table');
@@ -50,9 +70,9 @@ class DbSettingsStorage implements SettingsStorageInterface
     /**
      * Create new connection instance to work with
      *
-     * @return mixed
+     * @return Builder
      */
-    protected function newInstance()
+    protected function newInstance(): Builder
     {
         $this->query = $this->db->connection($this->connection)->table($this->table);
 
@@ -65,9 +85,9 @@ class DbSettingsStorage implements SettingsStorageInterface
      * @param $key
      * @param $value
      *
-     * @return $this
+     * @return DbSettingsStorage
      */
-    public function where($key, $value)
+    public function where($key, $value): DbSettingsStorage
     {
         $this->query->where($key, $value);
 
@@ -81,7 +101,7 @@ class DbSettingsStorage implements SettingsStorageInterface
      *
      * @return DbSettingsStorage
      */
-    public function firstOrFail()
+    public function firstOrFail(): DbSettingsStorage
     {
         $item = $this->query->first();
         $this->query = $this->newInstance();
@@ -103,7 +123,7 @@ class DbSettingsStorage implements SettingsStorageInterface
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         $query = $this->newInstance();
 
@@ -123,7 +143,7 @@ class DbSettingsStorage implements SettingsStorageInterface
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         try {
             $query = $this->newInstance();

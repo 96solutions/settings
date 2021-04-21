@@ -4,7 +4,9 @@ namespace NinetySixSolutions\Settings\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \NinetySixSolutions\Settings\Settings
+ * Class Settings
+ *
+ * @package NinetySixSolutions\Settings\Facades
  */
 class Settings extends Facade
 {
@@ -13,7 +15,7 @@ class Settings extends Facade
      *
      * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'Settings';
     }

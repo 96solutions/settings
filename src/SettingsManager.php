@@ -20,7 +20,7 @@ class SettingsManager extends Manager
      *
      * @return EloquentSettingsStorage
      */
-    public function createEloquentDriver()
+    public function createEloquentDriver(): EloquentSettingsStorage
     {
         $connectionName = $this->getConfig('connection');
         $table = $this->getConfig('table');
@@ -33,7 +33,7 @@ class SettingsManager extends Manager
      *
      * @return DbSettingsStorage
      */
-    public function createDbDriver()
+    public function createDbDriver(): DbSettingsStorage
     {
         $connectionName = $this->getConfig('connection');
         $table = $this->getConfig('table');
@@ -46,7 +46,7 @@ class SettingsManager extends Manager
      *
      * @return JsonSettingsStorage
      */
-    public function createJsonDriver()
+    public function createJsonDriver(): JsonSettingsStorage
     {
         $path = $this->getConfig('path');
 
